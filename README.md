@@ -1,1 +1,1 @@
-# ng-note-taker
+# notes-app
