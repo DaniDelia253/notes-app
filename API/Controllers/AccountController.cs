@@ -34,17 +34,32 @@ public class AccountController : ControllerBase
             {
                 Id = (int)reader[0],
                 email = reader[1].ToString(),
-                username = reader[1].ToString(),
-                passwordSalt = reader[1].ToString(),
-                passwordHash = reader[1].ToString(),
-
-
+                username = reader[2].ToString(),
+                passwordSalt = reader[3].ToString(),
+                passwordHash = reader[4].ToString(),
             });
         }
         connector.CloseConnection();
         return users;
     }
     //get a user by id
+    // [HttpGet("{id}")]
+    // public User GetAUserById(int id)
+    // {
+
+    //     string query = $"SELECT * FROM users WHERE Id = {id}";
+    //     var connector = new DatabaseConnector(connectionString);
+    //     var reader = connector.CreateDatabaseReader(query);
+
+    //     return new User
+    //     {
+    //         Id = (int)reader[0],
+    //         email = reader[1].ToString(),
+    //         username = reader[1].ToString(),
+    //         passwordSalt = reader[1].ToString(),
+    //         passwordHash = reader[1].ToString(),
+    //     };
+    // }
     //get a user by username
     //create a new user
     //TODO: add logic to programatically create the password salt and hash based on a password that is given (will need a register DTO)
