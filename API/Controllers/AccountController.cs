@@ -1,9 +1,6 @@
 using API.Data;
 using API.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using Mysqlx.Prepare;
 
 namespace API.Controllers;
 
@@ -123,6 +120,6 @@ public class AccountController : ControllerBase
         connector.CloseConnection();
         return Ok();
     }
-    //TODO: add login functionality that verifys a user's credentials and gives a JWT
+    //TODO: add login functionality that verifies a user's credentials and gives a JWT
 
 }
