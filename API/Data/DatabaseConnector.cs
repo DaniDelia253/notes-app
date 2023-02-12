@@ -14,18 +14,16 @@ namespace API.Data
         {
             connection = new MySqlConnection(connectionString);
         }
-        public MySqlDataReader CreateDatabaseReader(string query)
+        public MySqlCommand CreateConnectedCommand(string query)
         {
             connection.Open();
 
-            MySqlCommand cmd = new MySqlCommand
+            return new MySqlCommand
             {
                 CommandText = query,
                 Connection = connection,
                 CommandType = CommandType.Text
             };
-
-            return cmd.ExecuteReader();
         }
         public void CloseConnection()
         {
