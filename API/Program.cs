@@ -1,7 +1,8 @@
 using System.Reflection;
+using API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Services.ConfigureCors();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -19,7 +20,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
+app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
