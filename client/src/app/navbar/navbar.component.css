@@ -1,8 +1,10 @@
 .navbar {
   background-image: url("https://i.imgur.com/svK372M.png");
   background-size: cover;
-  height: 300px; /* larger than 2000*/
+  height: 300px;
 }
+
+/* TODO: figure out how to make media query changes animated so they are prettier :) */
 
 @media (max-width: 3000px) {
   .navbar {
