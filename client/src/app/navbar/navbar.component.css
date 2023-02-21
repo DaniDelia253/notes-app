@@ -45,19 +45,46 @@
   .navbar {
     height: 45px;
   }
+  button,
+  input {
+    height: 30px;
+    font-size: 12px;
+    padding: 4px 10px;
+  }
 }
 @media (max-width: 465px) {
   .navbar {
     height: 40px;
+  }
+  button,
+  input {
+    height: 25px;
+    padding: 1px 10px;
+    margin: 2px !important;
   }
 }
 @media (max-width: 415px) {
   .navbar {
     height: 30px;
   }
+  button,
+  input {
+    font-size: 8px;
+
+    height: 15px;
+    padding: 0 6px;
+    margin: 1px !important;
+  }
 }
 @media (max-width: 315px) {
   .navbar {
     height: 20px;
+    padding: 0;
+  }
+  button,
+  input {
+    font-size: 5px;
+    height: 10px;
+    margin: 0 1px !important;
   }
 }
