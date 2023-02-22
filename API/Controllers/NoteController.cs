@@ -19,7 +19,7 @@ public class NoteController : ControllerBase
     }
     //TODO: Add error handling!
     [HttpGet]
-    public IEnumerable<Note> GetAllNotes()
+    public async Task<IEnumerable<Note>> GetAllNotesAsync()
     {
         var notes = new List<Note>();
 
@@ -27,7 +27,7 @@ public class NoteController : ControllerBase
 
         var connector = new DatabaseConnector(connectionString);
         var command = connector.CreateConnectedCommand(query);
-        var reader = command.ExecuteReader();
+        var reader = await command.ExecuteReaderAsync();
 
         while (reader.Read())
         {
@@ -43,13 +43,13 @@ public class NoteController : ControllerBase
         return notes;
     }
     [HttpGet("id/{id}")]
-    public Note GetANoteById(int id)
+    public async Task<Note> GetANoteByIdAsync(int id)
     {
 
         string query = $"SELECT * FROM notes WHERE note_id = {id}";
         var connector = new DatabaseConnector(connectionString);
         var command = connector.CreateConnectedCommand(query);
-        var reader = command.ExecuteReader();
+        var reader = await command.ExecuteReaderAsync();
 
         reader.Read();
 
@@ -72,7 +72,7 @@ public class NoteController : ControllerBase
         return note;
     }
     [HttpGet("user/{id}")]
-    public IEnumerable<Note> GetAllNotesForAUserByUerId(int id)
+    public async Task<IEnumerable<Note>> GetAllNotesForAUserByUerIdAsync(int id)
     {
 
         var notes = new List<Note>();
@@ -80,7 +80,7 @@ public class NoteController : ControllerBase
         string query = $"SELECT * FROM notes WHERE user_id = {id}";
         var connector = new DatabaseConnector(connectionString);
         var command = connector.CreateConnectedCommand(query);
-        var reader = command.ExecuteReader();
+        var reader = await command.ExecuteReaderAsync();
 
         while (reader.Read())
         {
@@ -96,33 +96,33 @@ public class NoteController : ControllerBase
         return notes;
     }
     [HttpPost]
-    public int CreateNewNote(Note newNote)
+    public async Task<int> CreateNewNoteAsync(Note newNote)
     {
         //TODO: update to get user info from JWT (will need a newNoteDTO)
         string query = $"INSERT INTO notes VALUES ( {newNote.note_id}, {newNote.user_id}, '{newNote.title}', '{newNote.content}')";
         var connector = new DatabaseConnector(connectionString);
         var command = connector.CreateConnectedCommand(query);
-        var result = command.ExecuteNonQuery();
+        var result = await command.ExecuteNonQueryAsync();
         connector.CloseConnection();
         return result;
     }
     [HttpPut("updateNote")]
-    public ActionResult UpdateExistingNote(Note updatedNote)
+    public async Task<ActionResult> UpdateExistingNoteAsync(Note updatedNote)
     {
         string query = $"UPDATE notes SET title = '{updatedNote.title}', content = '{updatedNote.content}' WHERE note_id = {updatedNote.note_id}";
         var connector = new DatabaseConnector(connectionString);
         var command = connector.CreateConnectedCommand(query);
-        var result = command.ExecuteNonQuery();
+        var result = await command.ExecuteNonQueryAsync();
         connector.CloseConnection();
         return Ok();
     }
     [HttpDelete("delete/{id}")]
-    public int DeleteUser(int id)
+    public async Task<int> DeleteUserAsync(int id)
     {
         string query = $"DELETE FROM notes WHERE note_id = {id}";
         var connector = new DatabaseConnector(connectionString);
         var command = connector.CreateConnectedCommand(query);
-        var result = command.ExecuteNonQuery();
+        var result = await command.ExecuteNonQueryAsync();
         connector.CloseConnection();
         return result;
     }

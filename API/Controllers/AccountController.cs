@@ -19,7 +19,7 @@ public class AccountController : ControllerBase
     }
     //TODO::: add error handling to all!
     [HttpGet]
-    public IEnumerable<User> GetAllUsers()
+    public async Task<IEnumerable<User>> GetAllUsersAsync()
     {
         var users = new List<User>();
 
@@ -27,7 +27,7 @@ public class AccountController : ControllerBase
 
         var connector = new DatabaseConnector(connectionString);
         var command = connector.CreateConnectedCommand(query);
-        var reader = command.ExecuteReader();
+        var reader = await command.ExecuteReaderAsync();
 
         while (reader.Read())
         {
@@ -45,13 +45,13 @@ public class AccountController : ControllerBase
     }
     //get a user by id
     [HttpGet("id/{id}")]
-    public User GetAUserById(int id)
+    public async Task<User> GetAUserByIdAsync(int id)
     {
 
         string query = $"SELECT * FROM users WHERE Id = {id}";
         var connector = new DatabaseConnector(connectionString);
         var command = connector.CreateConnectedCommand(query);
-        var reader = command.ExecuteReader();
+        var reader = await command.ExecuteReaderAsync();
 
         reader.Read();
 
@@ -68,13 +68,13 @@ public class AccountController : ControllerBase
     }
     //get a user by username
     [HttpGet("username/{username}")]
-    public User GetAUserByUsername(string username)
+    public async Task<User> GetAUserByUsernameAsync(string username)
     {
 
         string query = $"SELECT * FROM users WHERE username = '{username}'";
         var connector = new DatabaseConnector(connectionString);
         var command = connector.CreateConnectedCommand(query);
-        var reader = command.ExecuteReader();
+        var reader = await command.ExecuteReaderAsync();
         reader.Read();
 
         var user = new User
@@ -90,20 +90,20 @@ public class AccountController : ControllerBase
     }
     //create a new user
     [HttpPost("register")]
-    public int CreateNewUser(User newUser)
+    public async Task<int> CreateNewUserAsync(User newUser)
     {
         //TODO: add logic to programatically create the password salt and hash based on a password that is given (will need a register DTO)
         string query = $"INSERT INTO users VALUES ( {newUser.Id}, '{newUser.email}', '{newUser.username}', '{newUser.passwordSalt}', '{newUser.passwordHash}')";
         var connector = new DatabaseConnector(connectionString);
         var command = connector.CreateConnectedCommand(query);
-        var result = command.ExecuteNonQuery();
+        var result = await command.ExecuteNonQueryAsync();
         connector.CloseConnection();
         return result;
     }
     //TODO: create several update methods for updating things like username, email, and password
     //delete a user
     [HttpDelete("delete")]
-    public ActionResult DeleteUser(DeleteDTO AccountToDelete)
+    public async Task<ActionResult> DeleteUserAsync(DeleteDTO AccountToDelete)
     {
         string query;
         if (AccountToDelete.Id != null)
@@ -116,7 +116,7 @@ public class AccountController : ControllerBase
         { return NotFound(); }
         var connector = new DatabaseConnector(connectionString);
         var command = connector.CreateConnectedCommand(query);
-        var result = command.ExecuteNonQuery();
+        var result = await command.ExecuteNonQueryAsync();
         connector.CloseConnection();
         return Ok();
     }
