@@ -2,9 +2,8 @@
   background-image: url("https://i.imgur.com/svK372M.png");
   background-size: cover;
   height: 300px;
+  transition: all 0.3s;
 }
-
-/* TODO: figure out how to make media query changes animated so they are prettier :) */
 
 @media (max-width: 3000px) {
   .navbar {
