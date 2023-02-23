@@ -1,4 +1,7 @@
+using System.Security.Cryptography;
+using System.Text;
 using API.Data;
+using API.Data.DTOs;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -90,10 +93,15 @@ public class AccountController : ControllerBase
     }
     //create a new user
     [HttpPost("register")]
-    public async Task<int> CreateNewUserAsync(User newUser)
+    public async Task<int> CreateNewUserAsync(RegisterDTO registerDto)
     {
-        //TODO: add logic to programatically create the password salt and hash based on a password that is given (will need a register DTO)
-        string query = $"INSERT INTO users VALUES ( {newUser.Id}, '{newUser.email}', '{newUser.username}', '{newUser.passwordSalt}', '{newUser.passwordHash}')";
+        //TODO: find out if the email or username already exists before letting them register
+
+        var hmac = new HMACSHA512();
+        var passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.password));
+        var passwordSalt = hmac.Key;
+
+        string query = $"INSERT INTO users (email, username, passwordSalt, passwordHash) VALUES ( '{registerDto.email.ToLower()}', '{registerDto.username.ToLower()}', '{Convert.ToBase64String(passwordSalt)}', '{Convert.ToBase64String(passwordHash)}')";
         var connector = new DatabaseConnector(connectionString);
         var command = connector.CreateConnectedCommand(query);
         var result = await command.ExecuteNonQueryAsync();
