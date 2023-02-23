@@ -1,4 +1,5 @@
 using API.Data;
+using API.Data.DTOs;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -96,10 +97,9 @@ public class NoteController : ControllerBase
         return notes;
     }
     [HttpPost]
-    public async Task<int> CreateNewNoteAsync(Note newNote)
+    public async Task<int> CreateNewNoteAsync(NewNoteDTO newNote)
     {
-        //TODO: update to get user info from JWT (will need a newNoteDTO)
-        string query = $"INSERT INTO notes VALUES ( {newNote.note_id}, {newNote.user_id}, '{newNote.title}', '{newNote.content}')";
+        string query = $"INSERT INTO notes (user_id, title, content) VALUES ({newNote.user_id}, \"{newNote.title}\", \"{newNote.content}\")";
         var connector = new DatabaseConnector(connectionString);
         var command = connector.CreateConnectedCommand(query);
         var result = await command.ExecuteNonQueryAsync();
@@ -109,7 +109,7 @@ public class NoteController : ControllerBase
     [HttpPut("updateNote")]
     public async Task<ActionResult> UpdateExistingNoteAsync(Note updatedNote)
     {
-        string query = $"UPDATE notes SET title = '{updatedNote.title}', content = '{updatedNote.content}' WHERE note_id = {updatedNote.note_id}";
+        string query = $"UPDATE notes SET title = \"{updatedNote.title}\", content = \"{updatedNote.content}\" WHERE note_id = {updatedNote.note_id}";
         var connector = new DatabaseConnector(connectionString);
         var command = connector.CreateConnectedCommand(query);
         var result = await command.ExecuteNonQueryAsync();
