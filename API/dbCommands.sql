@@ -14,3 +14,6 @@ INSERT INTO notes (user_id, title, content)VALUES (1, "This is my second note", 
 INSERT INTO notes (user_id, title, content)VALUES (2, "user2note", "this is what user 2 wrote!!!");
 INSERT INTO notes (user_id, title, content)VALUES (1, "My third note", "third is the one with the ___________");
 
+
+SELECT email, username FROM users WHERE email = \"${}\" OR username = \"${}\";
+SELECT email, username FROM users WHERE email = "" OR username = "sten";

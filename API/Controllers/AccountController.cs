@@ -2,7 +2,9 @@ using System.Security.Cryptography;
 using System.Text;
 using API.Data;
 using API.Data.DTOs;
+using API.Data.Responses;
 using API.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -20,6 +22,39 @@ public class AccountController : ControllerBase
         _logger = logger;
         connectionString = config.GetValue<string>("noteTaker:ConnectionString");
     }
+    private async Task<UserExisitsResponse> UserExists(string email, string username)
+    {
+        UserExisitsResponse response = new UserExisitsResponse
+        {
+            userAlreadyExists = false
+        };
+
+        string query = $"SELECT email, username FROM users WHERE email = \"{email}\" OR username = \"{username}\";";
+
+        var connector = new DatabaseConnector(connectionString);
+        var command = connector.CreateConnectedCommand(query);
+        var reader = await command.ExecuteReaderAsync();
+
+        while (reader.Read())
+        {
+            // System.Console.WriteLine(reader[0].ToString());
+            // System.Console.WriteLine(reader[1].ToString());
+
+            if (reader[0].ToString() == email)
+            {
+                response.userAlreadyExists = true;
+                response.message = "email already in use";
+            }
+            else if (reader[1].ToString() == username)
+            {
+                response.userAlreadyExists = true;
+                response.message = "username already in use";
+            }
+        }
+        connector.CloseConnection();
+        return response;
+    }
+
     //TODO::: add error handling to all!
     [HttpGet]
     public async Task<IEnumerable<User>> GetAllUsersAsync()
@@ -93,9 +128,15 @@ public class AccountController : ControllerBase
     }
     //create a new user
     [HttpPost("register")]
-    public async Task<int> CreateNewUserAsync(RegisterDTO registerDto)
+    public async Task<ActionResult> CreateNewUserAsync(RegisterDTO registerDto)
     {
-        //TODO: find out if the email or username already exists before letting them register
+
+        UserExisitsResponse check = await UserExists(registerDto.email, registerDto.username);
+        if (check.userAlreadyExists)
+        {
+            return BadRequest(check.message);
+        }
+
 
         var hmac = new HMACSHA512();
         var passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.password));
@@ -106,7 +147,7 @@ public class AccountController : ControllerBase
         var command = connector.CreateConnectedCommand(query);
         var result = await command.ExecuteNonQueryAsync();
         connector.CloseConnection();
-        return result;
+        return Ok();
     }
     //TODO: create several update methods for updating things like username, email, and password
     //delete a user
