@@ -37,8 +37,6 @@ public class AccountController : ControllerBase
 
         while (reader.Read())
         {
-            // System.Console.WriteLine(reader[0].ToString());
-            // System.Console.WriteLine(reader[1].ToString());
 
             if (reader[0].ToString() == email)
             {
