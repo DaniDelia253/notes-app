@@ -64,20 +64,31 @@ public class AccountController : ControllerBase
         var connector = new DatabaseConnector(connectionString);
         var command = connector.CreateConnectedCommand(query);
         var reader = await command.ExecuteReaderAsync();
-
-        while (reader.Read())
+        try
         {
-            users.Add(new User
+
+            while (reader.Read())
             {
-                Id = (int)reader[0],
-                email = reader[1].ToString(),
-                username = reader[2].ToString(),
-                passwordSalt = reader[3].ToString(),
-                passwordHash = reader[4].ToString(),
-            });
+                users.Add(new User
+                {
+                    Id = (int)reader[0],
+                    email = reader[1].ToString(),
+                    username = reader[2].ToString(),
+                    passwordHash = reader[3].ToString(),
+                    passwordSalt = reader[4].ToString(),
+                });
+            }
+            connector.CloseConnection();
+            return users;
         }
-        connector.CloseConnection();
-        return users;
+        catch (Exception e)
+        {
+            System.Console.WriteLine("Bad GetAllUsersAsync request. Error:");
+            System.Console.WriteLine($"EXCEPTION: {e}");
+            // return BadRequest(e);
+            return null;
+        }
+
     }
     //get a user by id
     [HttpGet("id/{id}")]
@@ -88,19 +99,29 @@ public class AccountController : ControllerBase
         var connector = new DatabaseConnector(connectionString);
         var command = connector.CreateConnectedCommand(query);
         var reader = await command.ExecuteReaderAsync();
-
-        reader.Read();
-
-        var user = new User
+        try
         {
-            Id = (int)reader[0],
-            email = reader[1].ToString(),
-            username = reader[2].ToString(),
-            passwordSalt = reader[3].ToString(),
-            passwordHash = reader[4].ToString(),
-        };
-        connector.CloseConnection();
-        return user;
+            reader.Read();
+
+            var user = new User
+            {
+                Id = (int)reader[0],
+                email = reader[1].ToString(),
+                username = reader[2].ToString(),
+                passwordHash = reader[3].ToString(),
+                passwordSalt = reader[4].ToString(),
+            };
+            connector.CloseConnection();
+            return user;
+
+        }
+        catch (Exception e)
+        {
+            System.Console.WriteLine("Bad GetAUserByIdAsync request. Error:");
+            System.Console.WriteLine($"EXCEPTION: {e}");
+            // return BadRequest(e);
+            return null;
+        }
     }
     //get a user by username
     [HttpGet("username/{username}")]
@@ -111,18 +132,27 @@ public class AccountController : ControllerBase
         var connector = new DatabaseConnector(connectionString);
         var command = connector.CreateConnectedCommand(query);
         var reader = await command.ExecuteReaderAsync();
-        reader.Read();
-
-        var user = new User
+        try
         {
-            Id = (int)reader[0],
-            email = reader[1].ToString(),
-            username = reader[2].ToString(),
-            passwordSalt = reader[3].ToString(),
-            passwordHash = reader[4].ToString(),
-        };
-        connector.CloseConnection();
-        return user;
+            reader.Read();
+            var user = new User
+            {
+                Id = (int)reader[0],
+                email = reader[1].ToString(),
+                username = reader[2].ToString(),
+                passwordHash = reader[3].ToString(),
+                passwordSalt = reader[4].ToString(),
+            };
+            connector.CloseConnection();
+            return user;
+        }
+        catch (Exception e)
+        {
+            System.Console.WriteLine("Bad GetAUserByUsernameAsync request. Error:");
+            System.Console.WriteLine($"EXCEPTION: {e}");
+            // return BadRequest(e);
+            return null;
+        }
     }
     //create a new user
     [HttpPost("register")]
@@ -140,12 +170,33 @@ public class AccountController : ControllerBase
         var passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.password));
         var passwordSalt = hmac.Key;
 
-        string query = $"INSERT INTO users (email, username, passwordSalt, passwordHash) VALUES ( '{registerDto.email.ToLower()}', '{registerDto.username.ToLower()}', '{Convert.ToBase64String(passwordSalt)}', '{Convert.ToBase64String(passwordHash)}')";
+        string query = $"INSERT INTO users (email, username, passwordHash, passwordSalt) VALUES ( '{registerDto.email.ToLower()}', '{registerDto.username.ToLower()}', '{Convert.ToBase64String(passwordHash)}', '{Convert.ToBase64String(passwordSalt)}')";
         var connector = new DatabaseConnector(connectionString);
         var command = connector.CreateConnectedCommand(query);
         var result = await command.ExecuteNonQueryAsync();
         connector.CloseConnection();
         return Ok();
+    }
+    //TODO: add login functionality that verifies a user's credentials and gives a JWT
+    [HttpPost("login")]
+    public async Task<ActionResult<User>> LoginAsync(LoginDTO loginDto)
+    {
+        User user = await GetAUserByUsernameAsync(loginDto.username);
+
+        if (user == null)
+        {
+            return Unauthorized("No user exists with this username!");
+            System.Console.WriteLine("USER NULL");
+        }
+        using var hmac = new HMACSHA512(Convert.FromBase64String(user.passwordSalt));
+        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.password));
+
+        for (int i = 0; i < computedHash.Length; i++)
+        {
+            if (computedHash[i] != Convert.FromBase64String(user.passwordHash)[i]) return Unauthorized("Invalid password!");
+        }
+        return user;
+
     }
     //TODO: create several update methods for updating things like username, email, and password
     //delete a user
@@ -167,6 +218,5 @@ public class AccountController : ControllerBase
         connector.CloseConnection();
         return Ok();
     }
-    //TODO: add login functionality that verifies a user's credentials and gives a JWT
 
 }

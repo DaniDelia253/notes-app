@@ -1,3 +1,11 @@
+CREATE TABLE users (
+Id INTEGER AUTO_INCREMENT,
+email TEXT,
+username TEXT,
+passwordHash TEXT,
+passwordSalt TEXT,
+PRIMARY KEY (Id)
+);
 CREATE TABLE notes (
 note_id INTEGER AUTO_INCREMENT,
 user_id INTEGER,
@@ -7,7 +15,6 @@ PRIMARY KEY (note_id),
 FOREIGN KEY (user_id) REFERENCES users(Id)
 );
 
-INSERT INTO users (email, username, passwordSalt, passwordHash) VALUES ("alicia@email.com", "alicia", "aliciaPasswordSalt", "aliciaPasswordHash");
 
 INSERT INTO notes (user_id, title, content)VALUES (1, "My first note", "this is the content of my first note");
 INSERT INTO notes (user_id, title, content)VALUES (1, "This is my second note", "even more content!!!!");
@@ -17,3 +24,4 @@ INSERT INTO notes (user_id, title, content)VALUES (1, "My third note", "third is
 
 SELECT email, username FROM users WHERE email = \"${}\" OR username = \"${}\";
 SELECT email, username FROM users WHERE email = "" OR username = "sten";
+
