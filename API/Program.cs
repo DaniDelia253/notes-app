@@ -1,13 +1,14 @@
 using System.Reflection;
 using API.Extensions;
+using API.Interfaces;
+using API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.ConfigureCors();
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+builder.Services.ConfigureCors();
 builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly(), true);
+builder.Services.AddScoped<ITokenService, TokenService>();
+
 
 
 var app = builder.Build();
