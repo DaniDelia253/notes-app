@@ -3,7 +3,9 @@ using System.Text;
 using API.Data;
 using API.Data.DTOs;
 using API.Data.Responses;
+using API.Interfaces;
 using API.Models;
+using API.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,11 +18,13 @@ public class AccountController : ControllerBase
 {
     private readonly ILogger<AccountController> _logger;
     private readonly string? connectionString;
+    private readonly ITokenService _tokenService;
 
-    public AccountController(ILogger<AccountController> logger, IConfiguration config)
+    public AccountController(ILogger<AccountController> logger, IConfiguration config, ITokenService tokenService)
     {
         _logger = logger;
         connectionString = config.GetValue<string>("noteTaker:ConnectionString");
+        _tokenService = tokenService;
     }
     private async Task<UserExisitsResponse> UserExists(string email, string username)
     {
@@ -53,7 +57,6 @@ public class AccountController : ControllerBase
         return response;
     }
 
-    //TODO::: add error handling to all!
     [HttpGet]
     public async Task<IEnumerable<User>> GetAllUsersAsync()
     {
@@ -156,7 +159,7 @@ public class AccountController : ControllerBase
     }
     //create a new user
     [HttpPost("register")]
-    public async Task<ActionResult> CreateNewUserAsync(RegisterDTO registerDto)
+    public async Task<ActionResult<UserDTO>> CreateNewUserAsync(RegisterDTO registerDto)
     {
 
         UserExisitsResponse check = await UserExists(registerDto.email, registerDto.username);
@@ -170,16 +173,27 @@ public class AccountController : ControllerBase
         var passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.password));
         var passwordSalt = hmac.Key;
 
-        string query = $"INSERT INTO users (email, username, passwordHash, passwordSalt) VALUES ( '{registerDto.email.ToLower()}', '{registerDto.username.ToLower()}', '{Convert.ToBase64String(passwordHash)}', '{Convert.ToBase64String(passwordSalt)}')";
+        var user = new User
+        {
+            email = registerDto.email.ToLower(),
+            username = registerDto.username.ToLower(),
+            passwordHash = Convert.ToBase64String(passwordHash),
+            passwordSalt = Convert.ToBase64String(passwordSalt)
+        };
+
+        string query = $"INSERT INTO users (email, username, passwordHash, passwordSalt) VALUES ( '{user.email}', '{user.username}', '{user.passwordHash}', '{user.passwordSalt}')";
         var connector = new DatabaseConnector(connectionString);
         var command = connector.CreateConnectedCommand(query);
         var result = await command.ExecuteNonQueryAsync();
         connector.CloseConnection();
-        return Ok();
+        return new UserDTO
+        {
+            Username = registerDto.username,
+            Token = _tokenService.CreateToken(user)
+        };
     }
-    //TODO: add login functionality that verifies a user's credentials and gives a JWT
     [HttpPost("login")]
-    public async Task<ActionResult<User>> LoginAsync(LoginDTO loginDto)
+    public async Task<ActionResult<UserDTO>> LoginAsync(LoginDTO loginDto)
     {
         User user = await GetAUserByUsernameAsync(loginDto.username);
 
@@ -195,7 +209,11 @@ public class AccountController : ControllerBase
         {
             if (computedHash[i] != Convert.FromBase64String(user.passwordHash)[i]) return Unauthorized("Invalid password!");
         }
-        return user;
+        return new UserDTO
+        {
+            Username = user.username,
+            Token = _tokenService.CreateToken(user)
+        };
 
     }
     //TODO: create several update methods for updating things like username, email, and password

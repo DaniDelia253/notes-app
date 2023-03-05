@@ -18,7 +18,6 @@ public class NoteController : ControllerBase
         _logger = logger;
         connectionString = config.GetValue<string>("noteTaker:ConnectionString");
     }
-    //TODO: Add error handling!
     [HttpGet]
     public async Task<IEnumerable<Note>> GetAllNotesAsync()
     {
