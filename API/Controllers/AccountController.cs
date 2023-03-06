@@ -6,12 +6,14 @@ using API.Data.Responses;
 using API.Interfaces;
 using API.Models;
 using API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 
 public class AccountController : ControllerBase
@@ -158,6 +160,7 @@ public class AccountController : ControllerBase
         }
     }
     //create a new user
+    [AllowAnonymous]
     [HttpPost("register")]
     public async Task<ActionResult<UserDTO>> CreateNewUserAsync(RegisterDTO registerDto)
     {
@@ -192,6 +195,7 @@ public class AccountController : ControllerBase
             Token = _tokenService.CreateToken(user)
         };
     }
+    [AllowAnonymous]
     [HttpPost("login")]
     public async Task<ActionResult<UserDTO>> LoginAsync(LoginDTO loginDto)
     {
