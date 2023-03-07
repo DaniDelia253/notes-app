@@ -1,8 +1,21 @@
 <nav class="navbar container-fluid col-12 d-flex justify-content-end">
   <div class="nav-items d-flex">
-    <button class="btn btn-light mx-2">+</button>
-    <button class="btn btn-light mx-2">logout</button>
-    <form class="d-flex mx-2" role="search">
+    <!-- 
+      for signed OUT users: 
+      ONLY a login form
+      w/ a button that says "no login? click here to sign up!"
+    -->
+    <!-- 
+      for signed in users: 
+      a form for a search bar w submit btn
+      add a note btn
+      logout btn
+    -->
+    <button class="btn btn-light mx-2" *ngIf="loggedIn">+</button>
+    <button class="btn btn-light mx-2" *ngIf="loggedIn" (click)="logout()">
+      logout
+    </button>
+    <form *ngIf="loggedIn" class="d-flex mx-2" role="search">
       <input
         class="form-control me-2 w-75"
         type="search"
@@ -12,6 +25,29 @@
       <button class="btn btn-outline-light" type="submit">
         <i class="bi bi-search"></i>
       </button>
+    </form>
+    <form
+      *ngIf="!loggedIn"
+      class="d-flex mx-2"
+      role="search"
+      #loginForm="ngForm"
+      (ngSubmit)="login()"
+    >
+      <input
+        name="username"
+        [(ngModel)]="model.username"
+        class="form-control me-2 w-75"
+        type="text"
+        placeholder="Username"
+      />
+      <input
+        name="password"
+        [(ngModel)]="model.password"
+        class="form-control me-2 w-75"
+        type="password"
+        placeholder="Password"
+      />
+      <button class="btn btn-outline-light" type="submit">Login</button>
     </form>
   </div>
 </nav>
