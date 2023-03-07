@@ -11,11 +11,24 @@
       add a note btn
       logout btn
     -->
-    <button class="btn btn-light mx-2" *ngIf="loggedIn">+</button>
-    <button class="btn btn-light mx-2" *ngIf="loggedIn" (click)="logout()">
+    <button
+      class="btn btn-light mx-2"
+      *ngIf="accountService.currentUser$ | async"
+    >
+      +
+    </button>
+    <button
+      class="btn btn-light mx-2"
+      *ngIf="accountService.currentUser$ | async"
+      (click)="logout()"
+    >
       logout
     </button>
-    <form *ngIf="loggedIn" class="d-flex mx-2" role="search">
+    <form
+      *ngIf="accountService.currentUser$ | async"
+      class="d-flex mx-2"
+      role="search"
+    >
       <input
         class="form-control me-2 w-75"
         type="search"
@@ -27,7 +40,7 @@
       </button>
     </form>
     <form
-      *ngIf="!loggedIn"
+      *ngIf="!(accountService.currentUser$ | async)"
       class="d-flex mx-2"
       role="search"
       #loginForm="ngForm"
