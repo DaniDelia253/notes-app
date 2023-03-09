@@ -1,0 +1,18 @@
+button {
+  color: white;
+
+  background: linear-gradient(
+    to bottom right,
+    rgb(0, 149, 255, 0.9),
+    rgb(144, 0, 255, 0.9)
+  );
+}
+
+button:hover {
+  background: linear-gradient(
+    to bottom right,
+    rgb(0, 149, 255),
+    rgb(144, 0, 255)
+  );
+  color: white;
+}

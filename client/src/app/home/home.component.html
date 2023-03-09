@@ -1,0 +1,21 @@
+<div class="container mt-5">
+  <div *ngIf="!registerMode" class="text-center">
+    <h1>Need to make a note?</h1>
+    <hr />
+    <p>Note Taker allows you to write reminders, make lists, and much more!</p>
+    <p>Sign up to get started!</p>
+    <div class="text-center"></div>
+    <button (click)="registerMode = !registerMode" class="btn btn-lg">
+      Register
+    </button>
+  </div>
+  <div *ngIf="registerMode" class="container">
+    <div class="row justify-content-center">
+      <div class="col-6">
+        <app-register-form
+          (onCancelRegisterMode)="cancelRegisterMode($event)"
+        ></app-register-form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -32,6 +32,18 @@ export class AccountService {
       })
     );
   }
+  register(model: any) {
+    return this.http.post<User>(this.baseUrl + 'account/register', model).pipe(
+      map((user) => {
+        if (user) {
+          //save to browser storage
+          localStorage.setItem('user', JSON.stringify(user));
+          //set an observable property of this service equal to the user that is logged in
+          this.setCurrentUser(user);
+        }
+      })
+    );
+  }
 
   logout() {
     //clear browser storage

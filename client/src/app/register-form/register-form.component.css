@@ -1,0 +1,14 @@
+.btn-sbmt {
+  background-color: rgb(71, 140, 255);
+  color: white;
+}
+.btn-sbmt:hover {
+  background-color: rgb(24, 106, 247);
+}
+.btn-cncl {
+  background-color: rgb(212, 160, 249);
+  color: white;
+}
+.btn-cncl:hover {
+  background-color: rgb(177, 84, 245);
+}
