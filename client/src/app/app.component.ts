@@ -9,7 +9,7 @@ import { AccountService } from './_services/account.service';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-  notes: any;
+  users: any;
 
   constructor(
     private http: HttpClient,
@@ -17,20 +17,20 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getUsers();
+    // this.getUsers();
     this.setCurrentUser();
   }
 
-  getUsers() {
-    this.http.get('http://localhost:5273/api/note').subscribe({
-      next: (data) => {
-        this.notes = data;
-        console.log(this.notes);
-      },
-      error: (error) => console.log(error),
-      complete: () => console.log('Request completed!'),
-    });
-  }
+  // getUsers() {
+  //   this.http.get('http://localhost:5273/api/account').subscribe({
+  //     next: (data) => {
+  //       this.users = data;
+  //       console.log(this.users);
+  //     },
+  //     error: (error) => console.log(error),
+  //     complete: () => console.log('Request completed!'),
+  //   });
+  // }
 
   setCurrentUser() {
     const userString = localStorage.getItem('user');

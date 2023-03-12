@@ -1,0 +1,16 @@
+.notes-page-container {
+  width: 100%;
+  min-height: 90vh;
+}
+
+.all-notes-container {
+  border-right: 4px solid #179eff6e;
+}
+
+.note-preview {
+  border-bottom: 4px solid #179eff6e;
+}
+
+.current-note-container {
+  padding: 35px;
+}
