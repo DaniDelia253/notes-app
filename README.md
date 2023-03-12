@@ -2,6 +2,6 @@
 
 This is a personal project I am creating to practice/showcase my development in C#/.NET.
 
-Currently I am working in the API folder to create an API that allows me to read and write to/from a MySQL database in AWS RDS. the database holds user information as well as the notes associated with each user. The controller logic will facilitate CRUD opperations on the data in the database, as well as implementing registration and log-in functionality using password hashing and JWT.
+At the recommendation of a mentor, I created the API without entity framework or any ORMs so I could get a really good understanding of how the framework interacts with the database. 
 
-Future development will include creating a React front end for the app.
+I am currently working on refactoring the backend to be more concise and follow best practices, as well as developing an angular frontend to allow full functionality!
