@@ -1,5 +1,8 @@
 <div class="container container-fluid col-12">
-  <div *ngIf="!(accountService.currentUser$ | async)" class="logged-out-home">
+  <div
+    *ngIf="!(accountService.currentUser$ | async)"
+    class="logged-out-home mt-5"
+  >
     <div *ngIf="!registerMode" class="text-center">
       <h1>Need to make a note?</h1>
       <hr />

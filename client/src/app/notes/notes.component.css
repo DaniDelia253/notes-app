@@ -1,6 +1,14 @@
 .notes-page-container {
   width: 100%;
   min-height: 90vh;
+  background: linear-gradient(
+    to right,
+    #00c6ff,
+    #00a8ff,
+    #468bff,
+    #8061ff,
+    #9649ff
+  );
 }
 
 .all-notes-container {

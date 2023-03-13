@@ -1,0 +1,11 @@
+<div class="all-notes-container section">
+  <div
+    *ngFor="let note of notes"
+    class="note-preview p-3 mb-3"
+    (click)="onSelectNote($event)"
+    id="{{ note.note_id }}"
+  >
+    <h6 class="">{{ note.title }}</h6>
+    <p class="pt-2">{{ note.content.slice(0, 50) }}...</p>
+  </div>
+</div>

@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { UntypedFormArray } from '@angular/forms';
+import { Note } from '../_models/Note';
 
 @Component({
   selector: 'app-notes',
@@ -7,7 +9,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./notes.component.css'],
 })
 export class NotesComponent implements OnInit {
-  notes: any = [];
+  @Output() currentNoteUpdated = new EventEmitter();
+  notes: Note[] = [];
+  currentNote: Note | undefined;
 
   constructor(private http: HttpClient) {}
 
@@ -18,5 +22,10 @@ export class NotesComponent implements OnInit {
       },
       error: (error) => console.log(error),
     });
+  }
+
+  onNoteSelected(noteId: number) {
+    this.currentNote = this.notes.find((note) => note.note_id === +noteId);
+    this.currentNoteUpdated.emit(this.currentNote);
   }
 }

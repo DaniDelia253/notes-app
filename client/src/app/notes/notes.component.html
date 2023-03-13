@@ -1,20 +1,13 @@
-<div class="notes-page-container d-flex flex-row">
-  <div class="all-notes-container section col-5">
-    <div *ngFor="let note of notes" class="note-preview">
-      <h6 class="m-4">{{ note.title }}</h6>
-      <p class="m-4">{{ note.content.slice(0, 40) }}...</p>
-    </div>
-  </div>
-  <div class="current-note-container section col-7">
-    one note Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eveniet
-    maiores tempore nemo provident repudiandae. Atque ipsam quas temporibus,
-    dicta at laborum. Nemo totam libero quos atque cupiditate voluptas beatae
-    quam. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Delectus
-    quis dolore sunt eaque odio suscipit maxime, atque nam nobis molestias
-    quisquam perspiciatis vitae eius amet optio, pariatur saepe quia enim! Lorem
-    ipsum, dolor sit amet consectetur adipisicing elit. Rerum, distinctio. Eum
-    exercitationem nulla odio assumenda explicabo dolorum provident eveniet
-    dolorem iure harum quibusdam nesciunt neque cupiditate, voluptate sapiente
-    necessitatibus! Odit.
-  </div>
+<div class="notes-page-container d-flex flex-row p-5">
+  <!-- all-notes-list -->
+  <app-all-notes-list
+    class="col-5"
+    [notes]="notes"
+    (onNoteSelected)="onNoteSelected($event)"
+  ></app-all-notes-list>
+  <!-- current note display -->
+  <app-current-note-display
+    class="col-7"
+    [currentNote]="currentNote"
+  ></app-current-note-display>
 </div>
